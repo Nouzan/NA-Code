@@ -85,26 +85,26 @@ class Polynomial():
         bList = [coffs[0]]
         for i in range(1, self.order + 1):
             bList.append(bList[i - 1] * x + coffs[i])
-        return bList
+        bList.reverse()
+        return (bList[0], Polynomial(bList[1:]))
 
-    def DList(self, x=0, d=0):
+    def dPoly(self, x=0, d=0):
         """
         利用秦九韶算法求导
         """
         if d == 0:
-            return self.qin9shao(x)
+            return Polynomial(self.coefficients)
         else:
-            bList = self.DList(x, d-1)
-            cList = [bList[0]]
-            for i in range(1, self.order + 1 - d):
-                cList.append(cList[i-1] * x + bList[i])
-            return cList
+            p = self.dPoly(x, d-1)
+            _, q = p.qin9shao(x)
+            return d * q
 
     def D(self, x=0, d=1):
-        if d <= self.order:
-            return self.DList(x, d)[self.order-d]
+        if 0 <= d <= self.order:
+            return self.dPoly(x, d)(x)
         else:
             return 0
 
     def __call__(self, x=0):
-        return self.qin9shao(x)[self.order]
+        b, q = self.qin9shao(x)
+        return b
