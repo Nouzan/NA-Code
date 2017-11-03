@@ -17,7 +17,6 @@ class Polynomial():
                     self.order = i
             self.coefficients = coffs[:self.order + 1]
 
-
     def __str__(self):
         coffStrList = []
         if self.coefficients[0] != 0:
@@ -64,7 +63,7 @@ class Polynomial():
                 coffs.append(k*coff)
             return Polynomial(coffs)
         elif type(k) == type(self):
-            # TODO:多项式乘法
+            # TODO: 多项式乘法
             return None
 
     def __neg__(self):
