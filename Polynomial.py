@@ -17,7 +17,6 @@ class Polynomial():
                     self.order = i
             self.coefficients = coffs[:self.order + 1]
 
-
     def __str__(self):
         coffStrList = []
         if self.coefficients[0] != 0:
@@ -51,14 +50,14 @@ class Polynomial():
             return Polynomial(coffs)
 
     def __rmul__(self, k):
-        if type(k) == type(0):
+        if isinstance(k, int):
             coffs = []
             for coff in self.coefficients:
                 coffs.append(k*coff)
             return Polynomial(coffs)
 
     def __mul__(self, k):
-        if type(k) == type(0):
+        if isinstance(k, int):
             coffs = []
             for coff in self.coefficients:
                 coffs.append(k*coff)
