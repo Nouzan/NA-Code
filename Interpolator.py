@@ -2,24 +2,28 @@ import numpy as np
 import Polynomial as ply
 
 
-class Interpolater():
+class NewtonInterpolater():
     n = 0
     x = []
     y = []
     _diffQuotDict = {}
 
-    def __init__(self, xx, yy):
+    def __init__(self, xx=[], yy=[]):
         self.x = xx
         self.y = yy
         self.n = len(xx)
         self.diffQuot(list(range(self.n)))
 
     def __iadd__(self, point):
-        x, y = point
-        self.x.append(x)
-        self.y.append(y)
-        self.n += 1
-        self.diffQuot(list(range(self.n)))
+        if isinstance(point, list):
+            for p in point:
+                self += p
+        else:
+            x, y = point
+            self.x.append(x)
+            self.y.append(y)
+            self.n += 1
+            self.diffQuot(list(range(self.n)))
         return self
 
     def diffQuot(self, positions):
