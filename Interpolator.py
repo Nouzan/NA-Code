@@ -1,18 +1,23 @@
 import numpy as np
-import Polynomial as ply
+import matplotlib.pyplot as plt
 
 
 class NewtonInterpolater():
     n = 0
     x = []
     y = []
+    a = None
+    b = None
     _diffQuotDict = {}
 
     def __init__(self, xx=[], yy=[]):
         self.x = xx
         self.y = yy
         self.n = len(xx)
-        self.diffQuot(list(range(self.n)))
+        if self.n > 0 :
+            self.a = min(xx)
+            self.b = max(xx)
+        # self.diffQuot(list(range(self.n)))
 
     def __iadd__(self, point):
         if isinstance(point, list):
@@ -24,6 +29,9 @@ class NewtonInterpolater():
             self.y.append(y)
             self.n += 1
             self.diffQuot(list(range(self.n)))
+            if self.n > 0 :
+                self.a = min(self.x)
+                self.b = max(self.x)
         return self
 
     def diffQuot(self, positions):
@@ -58,3 +66,23 @@ class NewtonInterpolater():
             positions = list(range(i + 1))
             result += self.diffQuot(positions) * bases[i]
         return result
+
+    def plot(self):
+        x = np.linspace(self.a, self.b)
+        plt.plot(x, self(x), self.x, self.y, 'rx')
+        plt.show()
+
+    class PiecewistLinearInterpolator():
+        n = 1
+        x = [0]
+        y = [0]
+        a = 0
+        b = 0
+
+        def __init__(self, x, y, mode=0):
+            if len(x) > 0:
+                self.n = len(x)
+                self.x = x
+                self.y = y
+                self.a = x[0]
+                self.b = x[-1]
