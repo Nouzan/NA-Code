@@ -66,7 +66,7 @@ class NewtonInterpolater():
         plt.plot(x, self(x), self.x, self.y, 'rx')
         plt.show()
 
-class PiecewiseLinearInterpolator():
+class PiecewiseInterpolator():
     # count = list()
     def __init__(self, x, y):
         if len(x) > 0:
@@ -77,16 +77,17 @@ class PiecewiseLinearInterpolator():
             self.a = x[0]
             self.b = x[-1]
             self.coffs = []
-            self._interp()
+
 
     def _interp(self):
-        for i in range(self.n - 1):
-            k1 = self.y[i] / (self.x[i] - self.x[i + 1])
-            k2 = self.y[i + 1] / (self.x[i + 1] - self.x[i])
-            self.coffs.append((k1, k2))
+        if len(self.coffs) == 0:
+            for i in range(self.n - 1):
+                k1 = self.y[i] / (self.x[i] - self.x[i + 1])
+                k2 = self.y[i + 1] / (self.x[i + 1] - self.x[i])
+                self.coffs.append((k1, k2))
 
     def __call__(self, x):
-        # self._interp()
+        self._interp()
         if isinstance(x, list):
             results = []
             for xx in x:
@@ -110,3 +111,43 @@ class PiecewiseLinearInterpolator():
         x = list(np.linspace(self.a, self.b))
         plt.plot(x, self(x), self.x, self.y, 'rx')
         plt.show()
+
+
+class PiecewiseHermiteInterpolator(PiecewiseInterpolator):
+    def __init__(self, x, y, dy):
+        super(PiecewiseHermiteInterpolator, self).__init__(x, y)
+        self.dy = dy
+
+    def _interp(self):
+        if len(self.coffs) == 0:
+            for i in range(self.n - 1):
+                k1 = self.y[i] / (self.x[i] - self.x[i+1]) ** 2
+                k2 = self.y[i] * 2 / (self.x[i+1] - self.x[i]) / (self.x[i] - self.x[i+1]) ** 2
+                k3 = self.y[i+1] / (self.x[i+1] - self.x[i]) ** 2
+                k4 = self.y[i+1] * 2 / (self.x[i] - self.x[i+1]) / (self.x[i+1] - self.x[i]) ** 2
+                k5 = self.dy[i] / (self.x[i] - self.x[i+1]) ** 2
+                k6 = self.dy[i+1] / (self.x[i+1] - self.x[i]) ** 2
+                self.coffs.append((k1, k2, k3, k4, k5, k6))
+
+    def __call__(self, x):
+        self._interp()
+        if isinstance(x, list):
+            results = []
+            for xx in x:
+                # print(xx)
+                results.append(self(xx))
+            return results
+        else:
+            if self.a < x <= self.b:
+                i = 0
+                while x > self.x[i]:
+                    i += 1
+                k1, k2, k3, k4, k5, k6 = self.coffs[i - 1]
+                result = k1 * (x - self.x[i]) ** 2 + k2 * (x - self.x[i-1]) * (x - self.x[i]) ** 2 +\
+                        k3 * (x - self.x[i-1]) ** 2 + k4 * (x - self.x[i]) * (x - self.x[i-1]) ** 2 +\
+                        k5 * (x - self.x[i]) ** 2 * (x - self.x[i-1]) + k6 * (x - self.x[i-1]) ** 2 * (x - self.x[i])
+            elif x == self.a:
+                result = self.y[0]
+            else:
+                reuslt = None
+            return result
