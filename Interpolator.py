@@ -159,3 +159,8 @@ class PiecewiseHermiteInterpolator(PiecewiseInterpolator):
             else:
                 result = None
             return result
+
+
+class SplineInterpolator(PiecewiseInterpolator):
+    def __init__(self, x, y):
+        super(SplineInterpolator, self).__init__(x, y)
