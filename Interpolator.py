@@ -3,17 +3,11 @@ import matplotlib.pyplot as plt
 
 
 class NewtonInterpolater():
-    n = 0
-    x = []
-    y = []
-    a = None
-    b = None
-    _diffQuotDict = {}
-
     def __init__(self, xx=[], yy=[]):
         self.x = xx
         self.y = yy
         self.n = len(xx)
+        self._diffQuotDict = {}
         if self.n > 0 :
             self.a = min(xx)
             self.b = max(xx)
@@ -72,17 +66,47 @@ class NewtonInterpolater():
         plt.plot(x, self(x), self.x, self.y, 'rx')
         plt.show()
 
-    class PiecewistLinearInterpolator():
-        n = 1
-        x = [0]
-        y = [0]
-        a = 0
-        b = 0
+class PiecewiseLinearInterpolator():
+    # count = list()
+    def __init__(self, x, y):
+        if len(x) > 0:
+            # self.count.append(1)
+            self.n = len(x)
+            self.x = x.copy() # 这里假定x列表已经从小到大排序
+            self.y = y.copy()
+            self.a = x[0]
+            self.b = x[-1]
+            self.coffs = []
+            self._interp()
 
-        def __init__(self, x, y, mode=0):
-            if len(x) > 0:
-                self.n = len(x)
-                self.x = x
-                self.y = y
-                self.a = x[0]
-                self.b = x[-1]
+    def _interp(self):
+        for i in range(self.n - 1):
+            k1 = self.y[i] / (self.x[i] - self.x[i + 1])
+            k2 = self.y[i + 1] / (self.x[i + 1] - self.x[i])
+            self.coffs.append((k1, k2))
+
+    def __call__(self, x):
+        # self._interp()
+        if isinstance(x, list):
+            results = []
+            for xx in x:
+                # print(xx)
+                results.append(self(xx))
+            return results
+        else:
+            if self.a < x <= self.b:
+                i = 0
+                while x > self.x[i]:
+                    i += 1
+                k1, k2 = self.coffs[i - 1]
+                result = k1 * (x - self.x[i]) + k2 * (x - self.x[i - 1])
+            elif x == self.a:
+                result = self.y[0]
+            else:
+                reuslt = None
+            return result
+
+    def plot(self):
+        x = list(np.linspace(self.a, self.b))
+        plt.plot(x, self(x), self.x, self.y, 'rx')
+        plt.show()
