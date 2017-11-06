@@ -195,7 +195,7 @@ class SplineInterpolator(PiecewiseInterpolator):
             self.d[0] = 6 / self.h[0] * (self.diffQuot([0, 1]) - self.da)
             self.miu[self.n - 1] = 1
             self.d[self.n - 1] = 6 * self.h[self.n - 2] *\
-            (self.db - self.diffQuot([self.n - 2, self.n - 1]))
+                (self.db - self.diffQuot([self.n - 2, self.n - 1]))
             A = []
             D = []
             for i in range(0, self.n):
@@ -205,8 +205,9 @@ class SplineInterpolator(PiecewiseInterpolator):
                 elif i == self.n - 1:
                     A.append([0] * (i - 1) + [self.miu[i], 2])
                 else:
-                    A.append([0] * (i - 1) + [self.miu[i], 2, self.lam[i]] +\
-                             [0] * (self.n - 2 - i))
+                    A.append(
+                        [0] * (i - 1) + [self.miu[i], 2, self.lam[i]] +
+                        [0] * (self.n - 2 - i))
             A = np.array(A, np.float)
             Ai = np.linalg.inv(A)
             D = np.array(D, np.float)
@@ -226,7 +227,7 @@ class SplineInterpolator(PiecewiseInterpolator):
                 elif i == self.n - 1:
                     A.append([0] * (i - 1) + [self.miu[i], 2])
                 else:
-                    A.append([0] * (i - 1) + [self.miu[i], 2, self.lam[i]] +\
+                    A.append([0] * (i - 1) + [self.miu[i], 2, self.lam[i]] +
                              [0] * (self.n - 2 - i))
             A = np.array(A, np.float)
             Ai = np.linalg.inv(A)
@@ -251,8 +252,8 @@ class SplineInterpolator(PiecewiseInterpolator):
                 result = self.m[i - 1] * (self.x[i] - x) ** 3 / (6 * h) +\
                     self.m[i] * (x - self.x[i - 1]) ** 3 / (6 * h) +\
                     (self.y[i - 1] - self.m[i - 1] * h * h / 6) / h *\
-                    (self.x[i] - x) + (self.y[i] - self.m[i] * h * h / 6) / h *\
-                    (x - self.x[i - 1])
+                    (self.x[i] - x) + (self.y[i] - self.m[i] * h * h / 6) /\
+                    h * (x - self.x[i - 1])
             elif x == self.a:
                 result = self.y[0]
             else:
