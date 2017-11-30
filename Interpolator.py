@@ -175,6 +175,7 @@ class SplineInterpolator(PiecewiseInterpolator):
         elif 'is_periodic' in kwargs:
             if kwargs['is_periodic']:
                 self.mode = 2
+                # TODO:周期边界条件下的三次样条插值
         self._diffQuotDict = {}
 
     def _interp(self):
@@ -209,6 +210,7 @@ class SplineInterpolator(PiecewiseInterpolator):
                         [0] * (i - 1) + [self.miu[i], 2, self.lam[i]] +
                         [0] * (self.n - 2 - i))
             A = np.array(A, np.float)
+            # 解线性方程组：
             Ai = np.linalg.inv(A)
             D = np.array(D, np.float)
             M = np.dot(Ai, D)
